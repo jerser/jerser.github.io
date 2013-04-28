@@ -18,7 +18,10 @@
 			<footer class="unit-foot">
 				<div class="unit-inner unit-foot-inner">
 					<p class="gotop">
-						<a href="#page">Back to Top</a> | More? Browse the <a href="/archive.html">archive</a>
+						<a href="#page">Back to Top</a>
+						{% if page.url != '/archive.html' %}
+						| More? Browse the <a href="/archive.html">archive</a>
+						{% endif %}
 					</p>
 				</div>
 			</footer>
