@@ -4,6 +4,6 @@
 </h1>
 {% endif %}
 <div class="entry-content">
-  {{ content | truncatewords: 30 }}
-  <a href="{{ root_url }}{{ post.url }}">Read more</a>
+  {{ content | strip_html | truncatewords: 30 }}
+  <p><a href="{{ root_url }}{{ post.url }}">Read more</a></p>
 </div>

@@ -6,8 +6,9 @@ title: Jeroen Serpieters
 
 {{ site.tagline }}
 
+{% for post in site.posts limit: 5 %}
 <div class="blog-index">
-  {% assign post = site.posts.first %}
   {% assign content = post.content %}
   {% include post_detail.html %}
 </div>
+{% endfor %}
