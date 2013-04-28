@@ -1,7 +1,13 @@
 ---
 layout: page
-title: Hello World!
-tagline: Supporting tagline
+title: Jeroen Serpieters
 ---
+{% include JB/setup %}
 
-Not much to see here right now. Check back later!
+{{ site.tagline }}
+
+<div class="blog-index">
+  {% assign post = site.posts.first %}
+  {% assign content = post.content %}
+  {% include post_detail.html %}
+</div>

@@ -10,7 +10,7 @@ pygments: true
 # so be sure to set them if your theme uses them.
 #
 title : Yesterday's news
-tagline: You could have found this elsewhere
+tagline: You may have read this already
 author :
   name : Jeroen Serpieters
   email : jeroen@serpieters.be
