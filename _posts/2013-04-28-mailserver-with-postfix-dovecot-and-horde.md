@@ -3,7 +3,7 @@ layout: post
 title: "Mailserver with Postfix, Dovecot and Horde"
 description: "How to set up a mailserver with Postfix, Dovecot, Spamassassin, Amavis and Horde"
 category: partheas
-tags: [tech,hosting,howto]
+tags: ["tech","hosting","howto"]
 ---
 {% include JB/setup %}
 
