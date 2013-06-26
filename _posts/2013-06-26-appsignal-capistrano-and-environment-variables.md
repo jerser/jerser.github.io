@@ -43,4 +43,15 @@ namespace :appsignal do
 end
 {% endhighlight %}
 
+And our config/appsignal.yml looks like this.
+
+{% highlight yaml %}
+---
+development:
+  active: false
+production:
+  api_key: "<%= ENV['APPSIGNAL_API_KEY'] %>"
+  active: true
+{% endhighlight %}
+
 I'll be posting a real review of it soon.
