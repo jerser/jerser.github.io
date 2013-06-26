@@ -28,17 +28,19 @@ integration which needs an API key being present on the machine you're deploying
 from. To circumvent this need I removed the default Capistrano integration and
 replaced it by a call to their cli that runs on the deployed host.
 
-    after "deploy", "appsignal:deploy"
-    after "deploy:migrations", "appsignal:deploy"
+{% highlight ruby %}
+after "deploy", "appsignal:deploy"
+after "deploy:migrations", "appsignal:deploy"
 
-    namespace :appsignal do
-      task :deploy do
-        run "cd #{current_path} ; bundle exec appsignal notify_of_deploy " \
-            "--revision=#{current_revision} " \
-            "--repository=#{repository} " \
-            "--user=#{ENV['USER']} " \
-            "--environment=#{rails_env}"
-      end
-    end
+namespace :appsignal do
+  task :deploy do
+    run "cd #{current_path} ; bundle exec appsignal notify_of_deploy " \
+        "--revision=#{current_revision} " \
+        "--repository=#{repository} " \
+        "--user=#{ENV['USER']} " \
+        "--environment=#{rails_env}"
+  end
+end
+{% endhighlight %}
 
 I'll be posting a real review of it soon.
