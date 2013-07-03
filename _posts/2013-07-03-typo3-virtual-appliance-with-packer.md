@@ -21,7 +21,7 @@ tweet passed by in my timeline:
 <blockquote class="twitter-tweet"><p>I'm excited to announce Packer: an open source tool for building machine images. <a href="http://t.co/2wwY68GHTU">http://t.co/2wwY68GHTU</a> <a href="http://t.co/Yx8ImYvSGK">http://t.co/Yx8ImYvSGK</a></p>&mdash; Mitchell Hashimoto (@mitchellh) <a href="https://twitter.com/mitchellh/statuses/350647179729309696">June 28, 2013</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-Why [Packer](http://packer.io) instead of Vagrant? Because it supports much more.
+**Why [Packer](http://packer.io) instead of Vagrant?** Because it supports much more.
 I can use it for plain Virtual Machines (useful for non-developers), use it to create
 production servers and use it for development as Vagrant boxes! In this particular
 use case I will use the same Packer template to create a [Digital Ocean](https://www.digitalocean.com)
@@ -44,14 +44,15 @@ reduce risks between developers and development/staging/production.
 * PHP 5.4.16
 * TYPO3 6.1.1
 
-Where possible, the provisioning/template does not use versions but uses the latest
+Whenever possible, the provisioning/template does not use versions but uses the latest
 version, the goal is to automatically rebuild when a new version of TYPO3 or one of
 its dependencies is released.
 
-#### Kickstart
+#### Booting the machine + running setup
 
 The installation is [kickstarted](https://www.centos.org/docs/5/html/Installation_Guide-en-US/s1-kickstart2-file.html)
-by this [Anaconda kickstart file]() served by Packers built-in webserver.
+by this [Anaconda kickstart file](https://github.com/jerser/packer-templates/blob/master/kickstart/centos_minimal.cfg)
+served by Packers built-in webserver.
 
 I just want to clarify one piece out of the kickstart file. I had to create an init
 script that is only executed on the first boot to be able to pull in updated packages.
@@ -95,23 +96,43 @@ exit 0
 
 #### Provisioning
 
-I just used the inline shell commands since it is still rather limited what has to be done.
-I will probably rework it into a shell script though to avoid having to use a webserver
-to run my [CasperJS script](https://gist.github.com/jerser/de36a686f3591d4f91d8).
-I initially thought/hoped that I could download files from the built-in webserver
-from Packer, just like during kickstart ([on its way](https://github.com/mitchellh/packer/issues/118)).
+I started out doing provisioning via the inline commands option, but this quickly
+becomes a mess, so I have now moved everything to separate provisioning scripts.
+You can see all scripts [here](https://github.com/jerser/packer-templates/tree/master/provisioning).
 
-_UPDATE_: Initially I tried to use override in provisioning to only install the
-VirtualBox Guest Additions when the current builder is virtualbox. For some reason
-this doesn't work (I'll look into it whether it is my misunderstanding of the docs or a bug)
-so I have moved it back into the 'global' provisioning. I am currently only using
-VirtualBox so I will fix it when I need to deploy to Digital Ocean.
-You can see the diff [here](https://github.com/jerser/packer-templates/commit/d3bc2a4abbb5553e612f000b7fc4d9e0018acd4e).
+The [Packer documentation](http://www.packer.io/docs/templates/provisioners.html) mentions an interesting overrides option for provisioning
+that should allow separate commands/scripts to be executed based on the active builder (e.g.: virtualbox).
 
-### Conclusion
+Unfortunately I didn't get it to work (or misunderstood the documentation), so I
+went ahead and installed [virt-what](http://people.redhat.com/~rjones/virt-what/) so I can
+check in a shell script if it is running inside VirtualBox or not. This is important
+because obviously you do not want to install the VirtualBox Guest Additions in
+non-VirtualBox images.
+
+{% highlight bash %}
+#!/bin/bash
+
+yum -y install virt-what
+
+if [ `virt-what` == "virtualbox" ]; then
+  yum -y install kernel-devel kernel-headers gcc make
+  rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+  yum -y install dkms
+  export KERN_DIR=/usr/src/kernels/`uname -r`
+  mkdir /mnt/VBoxGuestAdditions
+  mount -o loop VBoxGuestAdditions.iso /mnt/VBoxGuestAdditions
+  /mnt/VBoxGuestAdditions/VBoxLinuxAdditions.run
+  umount /mnt/VBoxGuestAdditions
+  rmdir /mnt/VBoxGuestAdditions
+fi
+
+rm -f VBoxGuestAdditions.iso
+{% endhighlight %}
+
+### Try it!
 
 You can get a zip of the files [here](https://github.com/jerser/packer-templates/archive/master.zip)
-or check it on [GitHub](https://github.com/jerser/packer-templates).
+or check the project on [GitHub](https://github.com/jerser/packer-templates).
 
 #### How to use it?
 
@@ -120,6 +141,13 @@ or check it on [GitHub](https://github.com/jerser/packer-templates).
     ==> Builds finished. The artifacts of successful builds are:
     --> virtualbox-typo3: VM files in directory: output-virtualbox-typo3
     --> virtualbox-typo3: 'virtualbox' provider box: packer_virtualbox.box
+
+When the build is finished you end up with one directory containing a VirtualBox
+configuration file and a VirtualBox harddrive (output-virtualbox-typo3) and one
+other file packer_virtualbox.box which is the same VirtualBox machine but converted
+to Vagrants box format. You can now reuse and distribute these files and the users
+will upon booting them be able to go to <http://localhost:9090> and see the TYPO3
+introduction package in all its glory.
 
 **Configuration details**
 
@@ -155,11 +183,10 @@ to further automate and streamline your TYPO3 development.
 I will write a follow-up on using Vagrant with this base box for TYPO3 development
 and some insight in automating TYPO3 deployment of configuration and extensions.
 
-### Security Warning
+### About security
 
 This setup is (on purpose for simplicity) insecure. The root password is readable in the kickstart
 file and there is only a root user and no firewall.
 For local development this is okay, but obviously not for production/online usage.
 
-I will later update it to reset all passwords automatically when deployed for
-production usage. Keep an eye on this page if you want to know how.
+I will detail this in the follow-up post once I have used Packer to build production images.
