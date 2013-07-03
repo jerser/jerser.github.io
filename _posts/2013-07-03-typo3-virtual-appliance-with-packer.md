@@ -101,25 +101,12 @@ to run my [CasperJS script](https://gist.github.com/jerser/de36a686f3591d4f91d8)
 I initially thought/hoped that I could download files from the built-in webserver
 from Packer, just like during kickstart ([on its way](https://github.com/mitchellh/packer/issues/118)).
 
-I used a provisioning override to only install the Virtual Box Guest Additions when
-the builder is virtualbox.
-
-{% highlight json %}
-"override": {
-      "virtualbox": {
-        "type": "shell",
-        "inline": [
-          "yum -y install gcc kernel-devel kernel-headers make bzip2",
-          "rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm",
-          "yum -y install dkms",
-          "export KERN_DIR=/usr/src/kernels/`uname -r`",
-          "mkdir /mnt/VBoxGuestAdditions",
-          "mount -o loop VBoxGuestAdditions.iso /mnt/VBoxGuestAdditions",
-          "/mnt/VBoxGuestAdditions/VBoxLinuxAdditions.run"
-        ]
-      }
-    }
-{% endhighlight %}
+_UPDATE_: Initially I tried to use override in provisioning to only install the
+VirtualBox Guest Additions when the current builder is virtualbox. For some reason
+this doesn't work (I'll look into it whether it is my misunderstanding of the docs or a bug)
+so I have moved it back into the 'global' provisioning. I am currently only using
+VirtualBox so I will fix it when I need to deploy to Digital Ocean.
+You can see the diff [here](https://github.com/jerser/packer-templates/commit/d3bc2a4abbb5553e612f000b7fc4d9e0018acd4e).
 
 ### Conclusion
 
