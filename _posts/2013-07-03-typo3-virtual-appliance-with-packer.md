@@ -23,7 +23,7 @@ tweet passed by in my timeline:
 
 Why [Packer](http://packer.io) instead of Vagrant? Because it supports much more.
 I can use it for plain Virtual Machines (useful for non-developers), use it to create
-production servers and use it for development as Vagrant boxes! In this particalur
+production servers and use it for development as Vagrant boxes! In this particular
 use case I will use the same Packer template to create a [Digital Ocean](https://www.digitalocean.com)
 droplet for the staging environment as well as for Vagrant boxes to be used by the developers.
 
