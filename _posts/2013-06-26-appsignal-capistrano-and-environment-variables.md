@@ -10,8 +10,7 @@ tags:
 ---
 {% include JB/setup %}
 
-For a [customer](http://www.stroomchecker.be/) of [Partheas](http://partheas.com/), I
-had to foresee better monitoring for a Ruby on Rails application. After comparing
+I needed monitoring for a Ruby on Rails application, after comparing
 a few I set on trying out [AppSignal](https://appsignal.com/).
 
 I haven't tested them enough to give a thorough review, but I did run into one
@@ -54,4 +53,5 @@ production:
   active: true
 {% endhighlight %}
 
-I'll be posting a real review of it soon.
+UPDATE 2014: [We](http://www.partheas.com) still use AppSignal for monitoring
+our Rails applications. We're happy with it, so go use it yourself!
