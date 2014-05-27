@@ -180,13 +180,8 @@ The nice part is that you now have a base Vagrant box that is pre-installed with
 LAMP stack and TYPO3. You can now create a [Vagrantfile](http://docs.vagrantup.com/v2/vagrantfile/index.html)
 to further automate and streamline your TYPO3 development.
 
-I will write a follow-up on using Vagrant with this base box for TYPO3 development
-and some insight in automating TYPO3 deployment of configuration and extensions.
-
 ### About security
 
 This setup is (on purpose for simplicity) insecure. The root password is readable in the kickstart
 file and there is only a root user and no firewall.
 For local development this is okay, but obviously not for production/online usage.
-
-I will detail this in the follow-up post once I have used Packer to build production images.
