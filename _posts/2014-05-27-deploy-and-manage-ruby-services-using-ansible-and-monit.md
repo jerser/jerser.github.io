@@ -321,7 +321,7 @@ $ vim ~/Ansible/Playbooks/myapp_deploy.yml
   - name: Copy logrotate configuration
     copy: src=~/MyApp/config/logrotate.conf dest=/opt/myapp/config/logrotate.conf mode=444
   - name: Ensure Logrotate Cron Job is present
-    cron: name=Logrotate user=myapp hour=6 state=present job="/usr/sbin/logrotate -f -s /opt/myapp/logrotate.status /opt/myapp/config/logrotate.conf"
+    cron: name=Logrotate user=myapp hour=6 state=present job="/usr/sbin/logrotate -s /opt/myapp/logrotate.status /opt/myapp/config/logrotate.conf"
 {% endhighlight %}
 
 ```
@@ -339,7 +339,9 @@ through Monit, Stops Monit (to prevent restarting the just stopped application),
 removes the currently installed Gem, installs the new copy, copies the monit monitoring
 script and it starts Monit and the application again.
 
-This is what I typically would have in the Monit script:
+Below is the minimum I typically would have in the Monit script. Depending on
+the use case I extend it with checks on open ports (e.g.: thrift services) or
+checks on memory usage and restarts if required. Check the [examples](http://mmonit.com/wiki/Monit/ConfigurationExamples).
 
 ```
 check process myapp with pidfile /opt/myapp/pids/myapp.pid
